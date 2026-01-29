@@ -4,8 +4,9 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "server": "npx tsx src/app.ts",
+    "server": "npx tsx watch src/app.ts",
     "webhook": "source .env && npx smee -u $WEBHOOK_PROXY_URL -t http://localhost:3000/api/webhook",
+    "typeCheck": "tsc --pretty --noEmit",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

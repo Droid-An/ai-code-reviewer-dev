@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { App } from "octokit";
+import { App, Octokit } from "octokit";
 import { createNodeMiddleware } from "@octokit/webhooks";
 import fs from "node:fs";
 import express from "express";
@@ -34,7 +34,26 @@ server.use(express.json());
 const messageForNewPRs =
   "Thanks for opening a new PR! Please follow our contributing guidelines to make your PR easier to review.";
 
-async function handlePullRequestOpened({ octokit, payload }) {
+interface HandlePullRequestOpenedArgs {
+  octokit: Octokit;
+  //I believe this type exist somewhere in octokit, I just haven't found it
+  payload: {
+    pull_request: {
+      number: number;
+    };
+    repository: {
+      name: string;
+      owner: {
+        login: string;
+      };
+    };
+  };
+}
+
+async function handlePullRequestOpened({
+  octokit,
+  payload,
+}: HandlePullRequestOpenedArgs) {
   console.log(
     `Received a pull request event for #${payload.pull_request.number}`,
   );
