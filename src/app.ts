@@ -93,9 +93,6 @@ app.webhooks.onError((error) => {
   }
 });
 
-const localWebhookUrl = `http://localhost:${port}${path}`;
-
 server.listen(port, () => {
   console.log(`Server running on port ${port}`);
-  console.log(`Server is listening for events at: ${localWebhookUrl}`);
 });
