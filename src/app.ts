@@ -4,6 +4,7 @@ import { createNodeMiddleware } from "@octokit/webhooks";
 import fs from "node:fs";
 import express from "express";
 import { RequestError } from "@octokit/request-error";
+import { runAiReview } from "./networks/github.ts";
 
 dotenv.config();
 
@@ -59,6 +60,12 @@ async function handlePullRequestOpened({
   );
 
   try {
+    await runAiReview(
+      payload.repository.owner.login,
+      payload.repository.name,
+      payload.pull_request.number,
+      octokit,
+    );
     await octokit.request(
       "POST /repos/{owner}/{repo}/issues/{issue_number}/comments",
       {
