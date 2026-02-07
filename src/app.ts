@@ -4,6 +4,7 @@ import express from "express";
 import { RequestError } from "@octokit/request-error";
 import { runAiReview } from "./networks/github.ts";
 import { env, privateKey } from "./config/env.ts";
+import type { EmitterWebhookEvent } from "@octokit/webhooks";
 
 const path = "/api/webhook";
 const server = express();
@@ -24,26 +25,10 @@ server.use(express.json());
 const messageForNewPRs =
   "Thanks for opening a new PR! Please follow our contributing guidelines to make your PR easier to review.";
 
-interface HandlePullRequestOpenedArgs {
-  octokit: Octokit;
-  //I believe this type exist somewhere in octokit, I just haven't found it
-  payload: {
-    pull_request: {
-      number: number;
-    };
-    repository: {
-      name: string;
-      owner: {
-        login: string;
-      };
-    };
-  };
-}
-
-async function handlePullRequestOpened({
-  octokit,
-  payload,
-}: HandlePullRequestOpenedArgs) {
+async function handlePullRequestOpened(
+  event: EmitterWebhookEvent<"pull_request.opened"> & { octokit: Octokit },
+) {
+  const { payload, octokit } = event;
   console.log(
     `Received a pull request event for #${payload.pull_request.number}`,
   );

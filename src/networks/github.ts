@@ -3,6 +3,7 @@ import { askOpenRouter } from "./ai_api_request";
 import { buildPRReviewPrompt } from "./buildPRReviewPrompt";
 import { postPRComment } from "./postPrComment";
 import { env, privateKey } from "../config/env";
+import type { PRFile } from "../types/githubTypes";
 
 const app = new App({
   appId: env.APP_ID,
@@ -32,19 +33,6 @@ const octokit = await app.getInstallationOctokit(installationRes.data.id);
 
 // TEMP: unauthenticated (lower usage limits)
 // const octokit = new Octokit();
-
-interface PRInfo {
-  owner: string;
-  repo: string;
-  pullNumber: number;
-}
-
-interface PRFile {
-  filename: string;
-  status: "added" | "modified" | "removed" | "renamed";
-  patch?: string;
-  previous_filename?: string;
-}
 
 async function getPRFiles(
   owner: string,
@@ -113,6 +101,6 @@ export async function runAiReview(
 
   return review;
 }
-
+//Test functions
 // run(ownerCYF, repoCYF, prNum, octokit);
 // runAiReview(owner, repo, 1, octokit);

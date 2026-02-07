@@ -14,7 +14,7 @@ export async function askOpenRouter(prompt: string) {
         role: "system",
         //TODO: change prompt
         content:
-          "You are a senior software engineer doing a pull request review. Be concise, actionable, and point out risks, bugs, and improvements.",
+          "You are a senior software engineer doing a pull request review. Be concise, actionable, and point out risks, bugs, and improvements. explain in as little text as possible",
       },
       {
         role: "user",

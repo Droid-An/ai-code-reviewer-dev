@@ -1,9 +1,4 @@
-interface PRFile {
-  filename: string;
-  status: "added" | "modified" | "removed" | "renamed";
-  patch?: string;
-  previous_filename?: string;
-}
+import type { PRFile } from "../types/githubTypes";
 
 export function buildPRReviewPrompt(params: {
   owner: string;
