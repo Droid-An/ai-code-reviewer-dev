@@ -1,29 +1,18 @@
-import dotenv from "dotenv";
 import { App, Octokit } from "octokit";
 import { createNodeMiddleware } from "@octokit/webhooks";
-import fs from "node:fs";
 import express from "express";
 import { RequestError } from "@octokit/request-error";
 import { runAiReview } from "./networks/github.ts";
-
-dotenv.config();
+import { env, privateKey } from "./config/env.ts";
 
 const path = "/api/webhook";
-const port = process.env.PORT || 3000;
-
 const server = express();
 
-const appId = process.env.APP_ID!;
-const webhookSecret = process.env.WEBHOOK_SECRET!;
-const privateKeyPath = process.env.PRIVATE_KEY_PATH!;
-
-const privateKey = fs.readFileSync(privateKeyPath, "utf8");
-
 const app = new App({
-  appId: appId,
+  appId: env.APP_ID,
   privateKey: privateKey,
   webhooks: {
-    secret: webhookSecret,
+    secret: env.WEBHOOK_SECRET,
   },
 });
 
@@ -100,6 +89,6 @@ app.webhooks.onError((error) => {
   }
 });
 
-server.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+server.listen(env.PORT, () => {
+  console.log(`Server running on port ${env.PORT}`);
 });

@@ -1,21 +1,14 @@
-import dotenv from "dotenv";
-import fs from "node:fs";
 import { App, Octokit } from "octokit";
 import { askOpenRouter } from "./ai_api_request";
 import { buildPRReviewPrompt } from "./buildPRReviewPrompt";
 import { postPRComment } from "./postPrComment";
-
-dotenv.config();
-const appId = process.env.APP_ID!;
-const webhookSecret = process.env.WEBHOOK_SECRET!;
-const privateKeyPath = process.env.PRIVATE_KEY_PATH!;
-const privateKey = fs.readFileSync(privateKeyPath, "utf8");
+import { env, privateKey } from "../config/env";
 
 const app = new App({
-  appId: appId,
+  appId: env.APP_ID,
   privateKey: privateKey,
   webhooks: {
-    secret: webhookSecret,
+    secret: env.WEBHOOK_SECRET,
   },
 });
 
@@ -122,4 +115,4 @@ export async function runAiReview(
 }
 
 // run(ownerCYF, repoCYF, prNum, octokit);
-// run(owner, repo, 1, octokit);
+// runAiReview(owner, repo, 1, octokit);

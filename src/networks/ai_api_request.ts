@@ -1,11 +1,8 @@
 import { OpenRouter } from "@openrouter/sdk";
-import dotenv from "dotenv";
-dotenv.config();
-
-const openRouterApiKey = process.env.OPENROUTER_API_KEY!;
+import { env } from "../config/env";
 
 const openRouter = new OpenRouter({
-  apiKey: openRouterApiKey,
+  apiKey: env.OPENROUTER_API_KEY,
 });
 
 export async function askOpenRouter(prompt: string) {
