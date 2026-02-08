@@ -16,6 +16,9 @@ export async function postPRComment(params: {
       repo,
       issue_number: pullNumber,
       body,
+      headers: {
+        "x-github-api-version": "2022-11-28",
+      },
     },
   );
 }

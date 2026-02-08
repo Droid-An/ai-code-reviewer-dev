@@ -5,9 +5,7 @@ import { RequestError } from "@octokit/request-error";
 import { runAiReview } from "./networks/github.ts";
 import { env, privateKey } from "./config/env.ts";
 import type { EmitterWebhookEvent } from "@octokit/webhooks";
-
-const path = "/api/webhook";
-const server = express();
+import { postPRComment } from "./networks/postPrComment.ts";
 
 const app = new App({
   appId: env.APP_ID,
@@ -17,8 +15,11 @@ const app = new App({
   },
 });
 
+const path = "/api/webhook";
+
 const middleware = createNodeMiddleware(app.webhooks, { path });
 
+const server = express();
 server.use(middleware);
 server.use(express.json());
 
@@ -34,24 +35,21 @@ async function handlePullRequestOpened(
   );
 
   try {
-    await runAiReview(
-      payload.repository.owner.login,
-      payload.repository.name,
-      payload.pull_request.number,
+    const owner = payload.repository.owner.login;
+    const repo = payload.repository.name;
+    const pullNumber = payload.pull_request.number;
+
+    postPRComment({ owner, repo, pullNumber, body: messageForNewPRs, octokit });
+
+    const aiReview = await runAiReview(owner, repo, pullNumber, octokit);
+
+    await postPRComment({
+      owner,
+      repo,
+      pullNumber,
+      body: `## 🤖 AI PR Review\n\n${aiReview}`,
       octokit,
-    );
-    await octokit.request(
-      "POST /repos/{owner}/{repo}/issues/{issue_number}/comments",
-      {
-        owner: payload.repository.owner.login,
-        repo: payload.repository.name,
-        issue_number: payload.pull_request.number,
-        body: messageForNewPRs,
-        headers: {
-          "x-github-api-version": "2022-11-28",
-        },
-      },
-    );
+    });
   } catch (error) {
     if (error instanceof RequestError) {
       if (error.response) {

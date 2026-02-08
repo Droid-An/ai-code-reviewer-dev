@@ -1,39 +1,12 @@
-import { App, Octokit } from "octokit";
+import { Octokit } from "octokit";
 import { askOpenRouter } from "./ai_api_request";
-import { buildPRReviewPrompt } from "./buildPRReviewPrompt";
+import { buildPRReviewPrompt } from "../utils/buildPRReviewPrompt";
 import { postPRComment } from "./postPrComment";
-import { env, privateKey } from "../config/env";
 import type { PRFile } from "../types/githubTypes";
 
-const app = new App({
-  appId: env.APP_ID,
-  privateKey: privateKey,
-  webhooks: {
-    secret: env.WEBHOOK_SECRET,
-  },
-});
-
-const owner = "Droid-An";
-const ownerCYF = "CodeYourFuture";
-const repo = "ai-code-reviewer-dev";
-const repoCYF = "Module-Data-Flows";
-const prNum = 152;
-
-const installationRes = await app.octokit.request(
-  "GET /repos/{owner}/{repo}/installation",
-  {
-    owner,
-    repo,
-    headers: {
-      "X-GitHub-Api-Version": "2022-11-28",
-    },
-  },
-);
-const octokit = await app.getInstallationOctokit(installationRes.data.id);
-
-// TEMP: unauthenticated (lower usage limits)
-// const octokit = new Octokit();
-
+/**
+ * Function to get code from the PR
+ */
 async function getPRFiles(
   owner: string,
   repo: string,
@@ -47,16 +20,13 @@ async function getPRFiles(
 
   return res.data;
 }
-/**
- * Function to get code from the PR
- */
+
 export async function runAiReview(
   owner: string,
   repo: string,
   pullNumber: number,
   octokit: Octokit,
 ) {
-  // 1. Parse URL
   console.log("\n📦 PR Info:", { owner, repo, pullNumber });
 
   const files = await getPRFiles(owner, repo, pullNumber, octokit);
@@ -91,16 +61,5 @@ export async function runAiReview(
   console.log(review);
   console.log("\n==========================================\n");
 
-  await postPRComment({
-    owner,
-    repo,
-    pullNumber,
-    body: `## 🤖 AI PR Review\n\n${review}`,
-    octokit,
-  });
-
   return review;
 }
-//Test functions
-// run(ownerCYF, repoCYF, prNum, octokit);
-// runAiReview(owner, repo, 1, octokit);
