@@ -4,7 +4,8 @@ import { createNodeMiddleware } from "@octokit/webhooks";
 import express from "express";
 import { App, Octokit } from "octokit";
 import { env, privateKey } from "./config/env.ts";
-import { runAiReview } from "./networks/github.ts";
+import { runAiReview } from "./networks/ai_api_request.ts";
+import { getPRFiles, logPRFiles } from "./networks/github.ts";
 import { postPRComment } from "./networks/postPrComment.ts";
 
 const app = new App({
@@ -40,8 +41,9 @@ async function handlePullRequestOpened(
     const pullNumber = payload.pull_request.number;
 
     postPRComment({ owner, repo, pullNumber, body: messageForNewPRs, octokit });
-
-    const aiReview = await runAiReview(owner, repo, pullNumber, octokit);
+    const files = await getPRFiles(owner, repo, pullNumber, octokit);
+    await logPRFiles(owner, repo, pullNumber, files);
+    const aiReview = await runAiReview(owner, repo, pullNumber, files);
 
     await postPRComment({
       owner,

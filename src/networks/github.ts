@@ -1,12 +1,10 @@
 import { Octokit } from "octokit";
 import type { PRFile } from "../types/githubTypes";
-import { buildPRReviewPrompt } from "../utils/buildPRReviewPrompt";
-import { askOpenRouter } from "./ai_api_request";
 
 /**
  * Function to get code from the PR
  */
-async function getPRFiles(
+export async function getPRFiles(
   owner: string,
   repo: string,
   pullNumber: number,
@@ -20,15 +18,13 @@ async function getPRFiles(
   return res.data;
 }
 
-export async function runAiReview(
+export async function logPRFiles(
   owner: string,
   repo: string,
   pullNumber: number,
-  octokit: Octokit,
+  files: PRFile[],
 ) {
   console.log("\n📦 PR Info:", { owner, repo, pullNumber });
-
-  const files = await getPRFiles(owner, repo, pullNumber, octokit);
   console.log(`\n📂 Changed files (${files.length}):`);
 
   console.log("\nResponse ----------------------------------");
@@ -44,21 +40,4 @@ export async function runAiReview(
       console.log("⚠️ No patch available");
     }
   }
-
-  const prompt = buildPRReviewPrompt({
-    owner,
-    repo,
-    pullNumber,
-    files,
-  });
-
-  console.log("\n🤖 Sending PR diff to OpenRouter for review...\n");
-
-  const review = await askOpenRouter(prompt);
-
-  console.log("\n================ PR REVIEW ================\n");
-  console.log(review);
-  console.log("\n==========================================\n");
-
-  return review;
 }
