@@ -1,8 +1,7 @@
 import { Octokit } from "octokit";
-import { askOpenRouter } from "./ai_api_request";
-import { buildPRReviewPrompt } from "../utils/buildPRReviewPrompt";
-import { postPRComment } from "./postPrComment";
 import type { PRFile } from "../types/githubTypes";
+import { buildPRReviewPrompt } from "../utils/buildPRReviewPrompt";
+import { askOpenRouter } from "./ai_api_request";
 
 /**
  * Function to get code from the PR

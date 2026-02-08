@@ -1,10 +1,10 @@
-import { App, Octokit } from "octokit";
+import { RequestError } from "@octokit/request-error";
+import type { EmitterWebhookEvent } from "@octokit/webhooks";
 import { createNodeMiddleware } from "@octokit/webhooks";
 import express from "express";
-import { RequestError } from "@octokit/request-error";
-import { runAiReview } from "./networks/github.ts";
+import { App, Octokit } from "octokit";
 import { env, privateKey } from "./config/env.ts";
-import type { EmitterWebhookEvent } from "@octokit/webhooks";
+import { runAiReview } from "./networks/github.ts";
 import { postPRComment } from "./networks/postPrComment.ts";
 
 const app = new App({
