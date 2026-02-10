@@ -7,7 +7,8 @@ export const getSchema = {
     properties: {
       feedback_points: {
         type: "array",
-        description: "A collection of feedback points.",
+        description:
+          "A collection of feedback points. Each feedback_point must refer to exactly one issue.",
         items: {
           type: "object",
           properties: {
@@ -22,7 +23,8 @@ export const getSchema = {
             },
             description: {
               type: "string",
-              description: "A detailed explanation of the feedback given.",
+              description:
+                "A detailed explanation of the feedback given. All line numbers MUST be placed inside line_ranges and NEVER written inside the description text.",
             },
             questions: {
               type: "string",
@@ -32,7 +34,7 @@ export const getSchema = {
             line_ranges: {
               type: "array",
               description:
-                "Exact line ranges from the provided line-numbered diff where the issue occurs. Never leave empty unless the feedback applies to the entire file.",
+                "REQUIRED. Exact line number ranges where the issue occurs. ",
               items: {
                 type: "object",
                 properties: {
@@ -43,11 +45,6 @@ export const getSchema = {
                 additionalProperties: false,
               },
             },
-            code_example: {
-              type: "string",
-              description:
-                "A code example providing a solution or illustration related to the feedback.",
-            },
             severity: {
               type: "integer",
               description:
@@ -57,7 +54,6 @@ export const getSchema = {
           required: [
             "file_name",
             "description",
-            "code_example",
             "questions",
             "line_ranges",
             "summary",

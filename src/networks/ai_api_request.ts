@@ -16,8 +16,11 @@ export async function askOpenRouter(prompt: string) {
       {
         role: "system",
         //TODO: change prompt
-        content:
-          "You are a senior software engineer doing a pull request review. Be concise, actionable, and point out risks, bugs, and improvements. explain in as little text as possible, When providing feedback, always include exact line ranges from the provided line-numbered diff. Never leave line_ranges empty unless the issue is conceptual and applies to the entire file.",
+        content: `You are a senior software engineer doing a pull request review. Be concise, actionable, and point out risks, bugs, and improvements. 
+        One file can have multiple feedback points.
+          When providing feedback, always include exact line ranges from the provided line-numbered diff. Never leave line_ranges empty unless the issue is conceptual and applies to the entire file. 
+          All line numbers MUST appear ONLY inside the line_ranges field.
+          DO NOT write line numbers inside description or summary.`,
       },
       {
         role: "user",
