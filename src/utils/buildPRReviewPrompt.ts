@@ -1,15 +1,15 @@
 import type { PRFile } from "../types/githubTypes";
+import { addLineNumbers } from "./lines";
 
-export function buildPRReviewPrompt(params: {
-  owner: string;
-  repo: string;
-  pullNumber: number;
-  files: PRFile[];
-}) {
-  const { owner, repo, pullNumber, files } = params;
+export function buildPRReviewPrompt(params: { files: PRFile[] }) {
+  const { files } = params;
 
   const filesText = files
     .map((f) => {
+      if (typeof f.patch === "string") {
+        f.patch = addLineNumbers(f.patch);
+      }
+
       return `### File: ${f.filename} (${f.status})
 \`\`\`diff
 ${f.patch ?? "NO_PATCH_AVAILABLE"}
@@ -20,9 +20,6 @@ ${f.patch ?? "NO_PATCH_AVAILABLE"}
 
   return `
 Review this GitHub Pull Request.
-
-Repo: ${owner}/${repo}
-PR: #${pullNumber}
 
 Changed files:
 ${filesText}
