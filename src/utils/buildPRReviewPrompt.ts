@@ -1,5 +1,5 @@
 import type { PRFile } from "../types/githubTypes";
-import { addLineNumbers } from "./lines";
+import addLineNumbers from "./addLineNumbers";
 
 export function buildPRReviewPrompt(params: { files: PRFile[] }) {
   const { files } = params;

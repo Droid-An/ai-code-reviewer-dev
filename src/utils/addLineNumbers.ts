@@ -1,4 +1,4 @@
-export function addLineNumbers(patch: string) {
+export default function addLineNumbers(patch: string) {
   let newLine = 0;
 
   const annotated = patch
