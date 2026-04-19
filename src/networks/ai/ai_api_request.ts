@@ -9,7 +9,12 @@ import {
 import { PRFile } from "../../types/githubTypes.js";
 import { buildPRReviewPrompt } from "../../utils/buildPRReviewPrompt.js";
 import { getSchema } from "../../utils/responseSchemas/getSchema.js";
-import { badCommentsPrompt, basePrompt, topics } from "../ai/prompt.js";
+import {
+  badCommentsPrompt,
+  basePrompt,
+  topics,
+  topicsForDublication,
+} from "../ai/prompt.js";
 import { askOpenRouterWithValidation } from "../ai/retryWithValidation.js";
 import { validateFeedbackPoints } from "../../validateFeedbackPoints.js";
 import { storeReview } from "../../db/storeReview.js";
@@ -21,6 +26,8 @@ const openRouter = new OpenRouter({
 export const MODEL = "openai/gpt-5.1";
 export const codeQualityPrompt = `${basePrompt}
         Topics are: \n- ${topics.join(`\n- `)}`;
+export const duplicatesPrompt = `${basePrompt}
+        Topics are: \n- ${topicsForDublication.join(`\n- `)}`;
 export const commentQualityPrompt = badCommentsPrompt;
 export const defaultChatParameters: Partial<ChatGenerationParams> = {
   temperature: 0,
@@ -49,6 +56,8 @@ function getSystemPrompt(type: string): string | null {
       return codeQualityPrompt;
     case "comments quality":
       return commentQualityPrompt;
+    case "duplications":
+      return duplicatesPrompt;
     default:
       return null;
   }
