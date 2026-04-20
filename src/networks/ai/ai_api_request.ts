@@ -13,7 +13,7 @@ import {
   badCommentsPrompt,
   basePrompt,
   topics,
-  topicsForDublication,
+  topicsForDuplication,
 } from "../ai/prompt.js";
 import { askOpenRouterWithValidation } from "../ai/retryWithValidation.js";
 import { validateFeedbackPoints } from "../../validateFeedbackPoints.js";
@@ -27,7 +27,7 @@ export const MODEL = "openai/gpt-5.1";
 export const codeQualityPrompt = `${basePrompt}
         Topics are: \n- ${topics.join(`\n- `)}`;
 export const duplicatesPrompt = `${basePrompt}
-        Topics are: \n- ${topicsForDublication.join(`\n- `)}`;
+        Topics are: \n- ${topicsForDuplication.join(`\n- `)}`;
 export const commentQualityPrompt = badCommentsPrompt;
 export const defaultChatParameters: Partial<ChatGenerationParams> = {
   temperature: 0,
@@ -128,11 +128,6 @@ export async function runAiReview(files: PRFile[]): Promise<AiResponse[]> {
   console.log(JSON.stringify(combinedReview, null, 2));
   console.log("\n==========================================\n");
   const validatedReview = validateFeedbackPoints(combinedReview, files);
-  console.log(
-    "✅ Validation completed. Validated review has",
-    validatedReview.length,
-    "responses",
-  );
   //I put this condition here because sha can be string | null
   if (
     files[0].sha &&

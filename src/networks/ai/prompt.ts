@@ -22,17 +22,17 @@ It must act the same as ls would, if run from the directory containing this READ
 ls -1
 ls -1 sample-files
 ls -1 -a sample-files
-Matching any additional behaviours or flags are optional stretch goals"
+Matching any additional behaviors or flags are optional stretch goals"
 You MUST evaluate the code against EVERY topic listed`;
 
 export const topics: string[] = [
   "Returning true or false from a condition, e.g `if (someExpression) { return true; } else { return false; }`",
   "Variables that are incorrectly scoped causing bugs",
-  "Making temporary variables which could be directly returned without improved clarity",
+  "Making temporary variables which doesn't improved clarity and could be directly returned ",
   "Bad naming that deceives the reader about what variable stores or function logic ",
 ];
 
-export const topicsForDublication: string[] = [
+export const topicsForDuplication: string[] = [
   "Duplicated code which can be moved into functions so they can be referenced from multiple places",
   "More than 6 levels of Deep Nesting",
 ];
