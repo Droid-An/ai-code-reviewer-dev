@@ -51,6 +51,15 @@ export const AiResponseSchema = z.object({
   feedback_type: z.enum(PROBLEM_AREAS),
   feedback_points: z.array(FeedbackPointSchema),
 });
+
+export const DeduplicationSchema = z.object({
+  deduplicate: z
+    .array(z.number())
+    .describe("Array of indexes that should be removed"),
+  reason: z.string().describe("Explain your reasoning"),
+});
+
 // Always create a TypeScript type from the schema using z.infer.
 export type AiResponse = z.infer<typeof AiResponseSchema>;
 export type FeedbackPoint = z.infer<typeof FeedbackPointSchema>;
+export type Deduplication = z.infer<typeof DeduplicationSchema>;

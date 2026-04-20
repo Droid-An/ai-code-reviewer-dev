@@ -18,6 +18,7 @@ import {
 import { askOpenRouterWithValidation } from "../ai/retryWithValidation.js";
 import { validateFeedbackPoints } from "../../validateFeedbackPoints.js";
 import { storeReview } from "../../db/storeReview.js";
+import { aggregateFeedback } from "./ai_aggregate_request.js";
 
 const openRouter = new OpenRouter({
   apiKey: env.OPENROUTER_API_KEY,
@@ -133,13 +134,14 @@ export async function runAiReview(files: PRFile[]): Promise<AiResponse[]> {
   console.log(JSON.stringify(combinedReview, null, 2));
   console.log("\n==========================================\n");
   const validatedReview = validateFeedbackPoints(combinedReview, files);
+  const aggregatedFeedback = await aggregateFeedback(validatedReview);
   //I put this condition here because sha can be string | null
   if (
     files[0].sha &&
-    validatedReview.some((response) => response.feedback_points.length > 0)
+    aggregatedFeedback.some((response) => response.feedback_points.length > 0)
   ) {
     console.log("📝 Storing review to database...");
-    storeReview(validatedReview, MODEL, files[0].sha, [
+    storeReview(aggregatedFeedback, MODEL, files[0].sha, [
       codeQualityPrompt,
       commentQualityPrompt,
     ]);
@@ -147,7 +149,7 @@ export async function runAiReview(files: PRFile[]): Promise<AiResponse[]> {
     console.log("No review to store");
   }
   console.log("🏁 runAiReview completed");
-  return validatedReview;
+  return aggregatedFeedback;
 }
 export function removeAdditionalLineNumbers(review: AiResponse): AiResponse {
   const sanitisedLineNumbers = review.feedback_points.map((point) => {

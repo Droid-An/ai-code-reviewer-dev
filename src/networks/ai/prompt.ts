@@ -59,3 +59,9 @@ Evaluate the code against this topics:
 - Code is already simple and obvious and no need to add a comment.
 - Code can be rewritten so it doesn't need a comment anymore.
 `;
+
+export const aggregationPrompt: string = `
+You are a similarity classifier for code review feedback.
+You are given a code review.
+Your task is to return indexes of least important points that describes a similar underlying issues.
+Think carefully about which index is less important`;
