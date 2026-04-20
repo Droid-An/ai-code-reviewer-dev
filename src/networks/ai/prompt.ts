@@ -30,6 +30,8 @@ export const topics: string[] = [
   "Variables that are incorrectly scoped causing bugs",
   "Making temporary variables which doesn't improved clarity and could be directly returned ",
   "Bad naming that deceives the reader about what variable stores or function logic ",
+  "Duplicated code which can be moved into functions so they can be referenced from multiple places",
+  "More than 6 levels of Deep Nesting",
 ];
 
 export const topicsForDuplication: string[] = [

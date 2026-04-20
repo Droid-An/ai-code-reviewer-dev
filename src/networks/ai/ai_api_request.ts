@@ -38,36 +38,37 @@ export const defaultChatParameters: Partial<ChatGenerationParams> = {
   },
 };
 
-function buildMessages(code: string, feedbackType: string): Message[] {
+function buildMessages(code: string, feedbackTopic: string): Message[] {
   const userMessage: Message = {
     role: "user",
     content: code,
   };
 
-  const systemPrompt = getSystemPrompt(feedbackType);
+  const systemPrompt = `${basePrompt}
+      Topics are: ${feedbackTopic}`;
   return systemPrompt
     ? [{ role: "system", content: systemPrompt }, userMessage]
     : [userMessage];
 }
 
-function getSystemPrompt(type: string): string | null {
-  switch (type.toLowerCase()) {
-    case "code quality":
-      return codeQualityPrompt;
-    case "comments quality":
-      return commentQualityPrompt;
-    case "duplications":
-      return duplicatesPrompt;
-    default:
-      return null;
-  }
-}
+// function getSystemPrompt(type: string): string | null {
+//   switch (type.toLowerCase()) {
+//     case "code quality":
+//       return codeQualityPrompt;
+//     case "comments quality":
+//       return commentQualityPrompt;
+//     case "duplications":
+//       return duplicatesPrompt;
+//     default:
+//       return null;
+//   }
+// }
 
 export async function aiCall(
   code: string,
-  feedbackType: string,
+  feedbackTopic: string,
 ): Promise<string> {
-  const messages: Message[] = buildMessages(code, feedbackType);
+  const messages: Message[] = buildMessages(code, feedbackTopic);
   const completion = await openRouter.chat.send({
     ...defaultChatParameters,
     messages: messages,
@@ -96,8 +97,12 @@ export async function runAiReview(files: PRFile[]): Promise<AiResponse[]> {
   console.log("--------- CODE --------\n", code);
   console.log("\n🤖 Sending PR diff to OpenRouter for review...\n");
   let combinedReview: AiResponse[] = [];
-  const feedbackPromises = FEEDBACK_TYPES.map((type) =>
-    askOpenRouterWithValidation(code, type),
+
+  // const feedbackPromises = FEEDBACK_TYPES.map((type) =>
+  //   askOpenRouterWithValidation(code, type),
+  // );
+  const feedbackPromises = topics.map((topic) =>
+    askOpenRouterWithValidation(code, topic),
   );
 
   const results = await Promise.allSettled(feedbackPromises);

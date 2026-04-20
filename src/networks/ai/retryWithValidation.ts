@@ -3,12 +3,12 @@ import { aiCall, validateAiResponse } from "../ai/ai_api_request.js";
 
 export async function askOpenRouterWithValidation(
   code: string,
-  reviewType: string,
+  reviewTopic: string,
   retries = 1,
 ): Promise<AiResponse> {
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      const response = await aiCall(code, reviewType);
+      const response = await aiCall(code, reviewTopic);
       response;
       return validateAiResponse(response);
     } catch (error: any) {
